@@ -1,0 +1,7 @@
+numpy
+requests
+pyyaml
+# local GPU/CPU backend
+faster-whisper>=1.1
+# optional: episodes.xlsx in reports
+openpyxl

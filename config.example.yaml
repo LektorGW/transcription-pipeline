@@ -1,0 +1,49 @@
+# Copy to config.yaml and pass with --config config.yaml (or set TP_CONFIG).
+# Every key is optional; defaults live in transcription_pipeline/config.py.
+
+output_dir: output          # transcripts/, run logs, episodes.csv, qa_flags.csv
+state_dir: state            # claims/ (lock files) and failed/ (tracebacks)
+audio_dir: ""               # pre-downloaded files named <episode id>.<ext> are used instead of downloading
+language: en
+
+# Names and terms the show uses, passed to Whisper as the initial prompt. Keep it to one or two sentences.
+# Segments that repeat this text verbatim (a known Whisper failure) are detected and re-transcribed.
+vocabulary: "Hosts Jane Doe and John Roe. Topics: heat pumps, grid storage, net metering."
+
+# Regex fixes applied to every segment before saving (consistent spelling of names, etc.)
+replacements:
+  - ['\bJon Roe\b', 'John Roe']
+  - ['\bnet meetering\b', 'net metering']
+
+# Additional phrases Whisper invents on music/silence in this particular show (regex, whole segment)
+extra_hallucinations:
+  - 'see you next week\.?'
+
+repair:
+  enabled: true
+  gap_s: 6.0                # re-transcribe silences longer than this inside the recording
+  edge_gap_s: 20.0          # ...and longer than this at the very start/end (intro music)
+  long_word_s: 4.0
+  include_edges: true
+
+local:                      # faster-whisper backend
+  model: large-v3           # or a local path / distil-large-v3 / medium.en / small
+  device: cuda              # cpu works too (use compute_type: int8)
+  compute_type: float16
+  batch_size: 16
+  beam_size: 5
+  vad_filter: true
+
+groq:                       # Groq API backend (GROQ_API_KEY in .env)
+  model: whisper-large-v3   # or whisper-large-v3-turbo
+  bitrate: 32k
+
+sync:
+  remote: ""                # rclone remote shared by several machines, e.g. "myremote:podcast-archive"
+  every_s: 120
+
+site:
+  title: Podcast Archive
+  subtitle: Every episode fully transcribed. Search any word and jump straight to that moment in the audio.
+  footer: ""
+  meta_dir: ""              # optional <id>.json files with title / summary / keywords / people / key_moments

@@ -1,0 +1,23 @@
+# secrets
+.env
+*.key
+rclone.conf
+
+# data and outputs
+output/
+state/
+site/
+audio/
+episodes.json
+*.mp3
+*.wav
+*.m4a
+*.part
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
